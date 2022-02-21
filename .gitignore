@@ -1,0 +1,6 @@
+.idea
+node_modules
+.venv
+packpage-lock.json
+local_settings.py
+__pycache__
