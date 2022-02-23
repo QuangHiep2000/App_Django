@@ -1,12 +1,15 @@
 from django.urls import path
 
 from blog import views
-from blog.views import blog_list, BlogPagination
+# from blog.views import BlogPagination
 # from rest_framework.routers import DefaultRouter
 #
+# app_name = "blog"
+
 urlpatterns = [
-    path(r'list/', views.blog_list.as_view({'get': 'list'})),
-    path(r'category/<str:slug>/', views.BlogPagination.as_view(), name='list'),
+    path(r'list/', views.blog_list),
+    path(r'category/<str:slug>/', views.CategoryPagination.as_view()),
+    path(r'', views.AdminPage.as_view())
 ]
 
 # router = DefaultRouter()
