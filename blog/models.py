@@ -16,3 +16,7 @@ class Blog(models.Model):
     is_public = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
 
+    # def get_absolute_url(self):
+    #     return reverse("url_api_content_blog", kwargs={"slug": self.slug})
+
+
