@@ -1,6 +1,10 @@
+from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
+from django import forms
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
@@ -10,6 +14,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from blog.models import Blog, Category
+from blog.forms import LoginForm
 from blog.serializers import BlogSerializer
 from rest_framework.decorators import api_view
 
@@ -105,6 +110,56 @@ class BlogSlug(TemplateView):
             context['data_list_blog_slug'] = serializer.data
             context['slug'] = kwargs.get('slug')
             return context
+
+
+# class BlogLogin(TemplateView):
+#     template_name = "blog/login.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         form = LoginForm()
+#         context['form_data'] = form
+#         print(form)
+#         return context
+
+
+class BlogLogin(LoginView):
+    template_name = "blog/login.html"
+
+    # def get_context_data(self, **kwargs):
+    #     # context = super().get_context_data(**kwargs)
+    #     form = LoginForm()
+    #     context = {}
+    #     context['form_data'] = form
+    #     print(form)
+    #     return context
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+        field_classes = {'username': UsernameField}
+        widgets = {
+            'email': forms.EmailInput(attrs={'required': True})
+        }
+
+
+class RegisterPage(FormView):
+    template_name = "blog/register.html"
+    form_class = RegisterForm
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        new_user = User.objects.create_user(
+            username=data['username'],
+            password=data['password1'],
+            email=data['email']
+        )
+        # url = f"{reverse('register')}"
+
 
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])

@@ -12,6 +12,8 @@ urlpatterns = [
     path('', views.AdminPage.as_view()),
     path('blog/blog-<str:slug>', views.BlogSlug.as_view()),
     path('blog/blog-<str:slug>/content', views.get_content_blog, name='api_blog'),
+    path('login/', views.BlogLogin.as_view(), name='login'),
+    path('register', views.RegisterPage.as_view(), name='register')
 ]
 
 # router = DefaultRouter()
