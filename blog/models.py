@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -16,7 +17,13 @@ class Blog(models.Model):
     is_public = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
 
+
+class BlogLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     # def get_absolute_url(self):
     #     return reverse("url_api_content_blog", kwargs={"slug": self.slug})
+
 
 
