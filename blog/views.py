@@ -1,8 +1,11 @@
+from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django import forms
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 
@@ -46,7 +49,7 @@ def blog_list(request):
 
 # @csrf_exempt
 # @api_view(['GET', 'PUT', 'DELETE'])
-class CategoryPagination(TemplateView):
+class CategoryPagination(LoginRequiredMixin, TemplateView):
     template_name = "blog/category.html"
 
     def get_context_data(self, **kwargs):
@@ -88,7 +91,7 @@ class AdminPage(TemplateView):
             return context
 
 
-class BlogSlug(TemplateView):
+class BlogSlug(LoginRequiredMixin, TemplateView):
     template_name = "blog/blog_slug.html"
 
     def get_context_data(self, **kwargs):
@@ -126,14 +129,6 @@ class BlogSlug(TemplateView):
 class BlogLogin(LoginView):
     template_name = "blog/login.html"
 
-    # def get_context_data(self, **kwargs):
-    #     # context = super().get_context_data(**kwargs)
-    #     form = LoginForm()
-    #     context = {}
-    #     context['form_data'] = form
-    #     print(form)
-    #     return context
-
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -142,9 +137,6 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ('username', 'email')
         field_classes = {'username': UsernameField}
-        widgets = {
-            'email': forms.EmailInput(attrs={'required': True})
-        }
 
 
 class RegisterPage(FormView):
@@ -153,13 +145,21 @@ class RegisterPage(FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        new_user = User.objects.create_user(
+        User.objects.create_user(
             username=data['username'],
             password=data['password1'],
             email=data['email']
         )
-        # url = f"{reverse('register')}"
+        return redirect('/login/')
 
+
+class ProfilePage(LoginRequiredMixin, TemplateView):
+    template_name = "blog/profile.html"
+
+
+def logout_page(request):
+    logout(request)
+    return redirect('/login/')
 
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])

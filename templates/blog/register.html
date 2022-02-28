@@ -22,16 +22,19 @@
             box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
         }
 
-        #id_username, #id_password {
+        #id_username, #id_password1, #id_password2, #id_email {
             display: block;
             width: 100%;
             border-radius: 5px;
         }
+        .helptext{
+            display: none;
+        }
     </style>
 </head>
 <body>
-<h1>Please sign up</h1>
-<form action="" method="post">
+<h1>Register</h1>
+<form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <div style="display: flex; justify-content: flex-end">
@@ -40,9 +43,9 @@
             Register
         </button>
     </div>
-{#    <div style="display: flex; justify-content: center;margin-top: 20px">#}
-{#        New to account?<a style="margin-left: 10px" href="/register">Register<i style="margin-left: 10px;" class="bi bi-reply-fill"></i></a>#}
-{#    </div>#}
+    <div style="display: flex; justify-content: center;margin-top: 20px">
+        Have an account?<a style="margin-left: 10px" href="/login">Log In<i style="margin-left: 10px;" class="bi bi-reply-fill"></i></a>
+    </div>
 </form>
 </body>
 </html>

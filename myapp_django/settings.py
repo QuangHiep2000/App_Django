@@ -132,6 +132,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 try:
     from myapp_django.local_settings import *
+
+    LOGIN_URL = '/login/'
+
+    LOGIN_REDIRECT_URL = '/'
 except ImportError:
     pass
 
