@@ -1,4 +1,8 @@
 {% extends "blog/base.html" %}
+{% load static %}
+{% block media_head %}
+    <link rel="stylesheet" href="{% static 'components/blog_like/css/main.72becad4.css' %}">
+{% endblock %}
 
 {% block content %}
     <div class="container-md">
@@ -9,13 +13,15 @@
                       src="https://blog.vietnovel.com/content/images/size/w2000/2022/02/be84621c-20ed-447a-be51-9571fbac7f02.jpeg">
             </div>
             <div style="margin-left: 8px">
-                <div><span style="font-weight: 500">Nguyễn Quang Hiệp </span>
-                    <div class="title"></div>
-                </div>
+                {% if user.is_authenticated %}
+                    <div><span style="font-weight: 500">{{ user.username }}</span>
+                        <div class="title"></div>
+                    </div>
+                {% endif %}
                 <div><span>Ngày khai bút:</span> <span id="day_create"></span></div>
+                <div id="root"></div>
                 {#            <div><span>Ngày cập nhật:</span> <span id="day_update"></span></div>#}
             </div>
-
         </div>
         <div style="border-bottom: 2px solid #a9a7a7" class="p-1">
 
@@ -33,7 +39,7 @@
                         <div><img style="border-radius: 4px"
                                   src="https://i.vnvl.net/vo/20220120/YR3Pvd.png.110x165_q85_crop.jpg"></div>
                         <div style="margin-left: 8px">
-                            <li><span style="font-weight: 500">Tên truyện: </span>{{ i.title }}</li>
+                            <li><span style="font-weight: 500">Tên truyện: </span><a class="text-decoration-none" style="color: #5495cf" href="{% url 'blog:blog_slug' i.slug %}">{{ i.title }}</a></li>
                             <li><span>Ngày khai bút:</span> {{ i.created_at }}</li>
                             <li><span>Ngày cập nhật:</span> {{ i.updated_at }}</li>
                         </div>
@@ -51,28 +57,35 @@
         function getContent() {
             let xhr = new XMLHttpRequest()
             xhr.open("GET", apiUrl, true);
-            console.log((xhr.readyState == 4 && xhr.status == 200))
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     let data = xhr.responseText
                     data = JSON.parse(data)[0]
                     let element = document.getElementsByClassName("title")
                     let elementDayCreate = document.getElementById("day_create")
-                    let elementDayUpdate = document.getElementById("day_update")
                     let elementContent = document.getElementById(("content"))
-                    elementDayCreate.innerHTML = data.created_at
+                    {#elementDayCreate.innerHTML = data.created_at#}
                     elementContent.innerHTML = data.content
                     for (let i of element) {
                         i.innerText = data.title
                     }
-                    console.log((data))
+                    {#console.log(data.created_at.DateTime.Now().ToString("yyyy/MM/dd"))#}
+                    const date = dayjs(data.created_at).format('YYYY/MM/DD - hh:mm:ss')
+                    elementDayCreate.textContent = date.toString()
                 }
             }
             xhr.send()
         }
-
-
     </script>
+    <script>
+        window.BLOG_LIKE_APIS = {
+            SLUG: {{ slug }},
+            BASE_URL: "",
+            GET_BLOG_LIKE: "{% url 'blog:api_like' %}",
+            ADD_BLOG_LIKE: "{% url 'blog:add_like' %}",
+        }
+    </script>
+    <script src="{% static 'components/blog_like/js/main.8ea6fd8c.js' %}"></script>
 {% endblock %}
 </html>
 

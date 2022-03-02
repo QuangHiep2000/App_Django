@@ -7,20 +7,23 @@
 
 {% block content %}
     <div class="container-md">
-{#        <h1 class="d-flex justify-content-center">My App</h1>#}
+        {#        <h1 class="d-flex justify-content-center">My App</h1>#}
         <ul class="list-unstyled list-book">
             {% for i in data_list_new %}
-                <div style="margin-top: 20px">
-                    <a style="width: fit-content;" class="text-decoration-none d-flex text-secondary"
-                       href="{% url 'blog:blog_slug' i.slug %}">
-                        <div><img style="border-radius: 4px"
-                                  src="https://i.vnvl.net/vo/20220120/YR3Pvd.png.110x165_q85_crop.jpg"></div>
-                        <div style="margin-left: 8px">
-                            <li><span style="font-weight: 500">Tên truyện: </span>{{ i.title }}</li>
-                            <li><span>Ngày khai bút:</span> {{ i.created_at }}</li>
-                            <li><span>Ngày cập nhật:</span> {{ i.updated_at }}</li>
-                        </div>
-                    </a>
+                <div class="d-flex" style="margin-top: 20px">
+                    <div><img style="border-radius: 4px"
+                              src="https://i.vnvl.net/vo/20220120/YR3Pvd.png.110x165_q85_crop.jpg"></div>
+                    <div class="" style="margin-left: 8px">
+                        <li><span style="font-weight: 500">Tên truyện: </span>
+                            <a style="width: fit-content;"
+                             class="text-decoration-none text-secondary"
+                             href="{% url 'blog:blog_slug' i.slug %}">
+                            {{ i.title }}
+                            </a>
+                        </li>
+                        <li><span>Ngày khai bút:</span> {{ i.created_at }}</li>
+                        <li><span>Ngày cập nhật:</span> {{ i.updated_at }}</li>
+                    </div>
                 </div>
             {% endfor %}
         </ul>

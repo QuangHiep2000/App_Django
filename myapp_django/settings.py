@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'blog.apps.BlogConfig',
+
+    "corsheaders",
+
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -53,6 +57,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'myapp_django.urls'
@@ -125,6 +132,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -152,3 +163,80 @@ REST_FRAMEWORK = {
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ]
 # }
+
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.history.HistoryPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+]
+
+DISABLE_PANELS = {
+    "debug_toolbar.panels.profiling.ProfilingPanel",
+    "debug_toolbar.panels.redirects.RedirectsPanel",
+}
+
+INSERT_BEFORE = '</body>'
+RENDER_PANELS = None
+RESULTS_CACHE_SIZE = 25
+ROOT_TAG_EXTRA_ATTRS = ''
+SHOW_COLLAPSED = False
+SHOW_TOOLBAR_CALLBACK = 'debug_toolbar.middleware.show_toolbar'
+OBSERVE_REQUEST_CALLBACK = 'debug_toolbar.middleware.observe_request'
+EXTRA_SIGNALS = []
+ENABLE_STACKTRACES = True
+ENABLE_STACKTRACES_LOCALS = False
+HIDE_IN_STACKTRACES = (
+    "socketserver",
+    "threading",
+    "wsgiref",
+    "debug_toolbar",
+    "django.db",
+    "django.core.handlers",
+    "django.core.servers",
+    "django.utils.decorators",
+    "django.utils.deprecation",
+    "django.utils.functional",
+)
+PRETTIFY_SQL = True
+PROFILER_MAX_DEPTH = 10
+SHOW_TEMPLATE_CONTEXT = True
+SKIP_TEMPLATE_PREFIXES = ('django/forms/widgets/', 'admin/widgets/')
+SQL_WARNING_THRESHOLD = 500
+DEBUG_TOOLBAR_CONFIG = {
+    # Toolbar options
+    'RESULTS_CACHE_SIZE': 3,
+    'SHOW_COLLAPSED': True,
+    # Panel options
+    'SQL_WARNING_THRESHOLD': 100,   # milliseconds
+    'SHOW_TOOLBAR_CALLBACK': lambda request: True,
+}
+if DEBUG:
+    import mimetypes
+    from django.urls import path, include
+
+    mimetypes.add_type("application/javascript", ".js", True)
+
+# if DEBUG:
+#     import mimetypes
+#     from django.urls import path, include
+#
+#     mimetypes.add_type("application/javascript", ".js", True)
+#     INTERNAL_IPS = ('127.0.0.1',)
+#     INSTALLED_APPS += ['debug_toolbar']
+#     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']

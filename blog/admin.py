@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Blog, Category
+from blog.models import Blog, Category, BlogLike
 
 
 # Register your models here.
@@ -13,4 +13,9 @@ class BlogAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
+
+
+@admin.register(BlogLike)
+class CategoryAdmin(admin.ModelAdmin):
+    pass
 

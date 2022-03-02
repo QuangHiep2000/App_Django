@@ -15,6 +15,8 @@ urlpatterns = [
     path('login/', views.BlogLogin.as_view(), name='login'),
     path('register/', views.RegisterPage.as_view(), name='register'),
     path('logout/', views.logout_page, name='logout'),
+    path('api/blog-like/', views.api_total_like, name='api_like'),
+    path('api/add-blog-like/', views.add_like, name='add_like'),
 ]
 
 # router = DefaultRouter()

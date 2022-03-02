@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django import forms
+from django.db.models.signals import post_save
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
@@ -16,9 +17,9 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from blog.models import Blog, Category
+from blog.models import Blog, Category, BlogLike
 from blog.forms import LoginForm
-from blog.serializers import BlogSerializer
+from blog.serializers import BlogSerializer, BlogLikeSerializer
 from rest_framework.decorators import api_view
 
 
@@ -96,7 +97,6 @@ class BlogSlug(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         try:
             # category = Category.objects.get(slug=kwargs.get('slug'))
             blog = Blog.objects.get(slug=kwargs.get('slug'))
@@ -122,7 +122,6 @@ class BlogSlug(LoginRequiredMixin, TemplateView):
 #         context = super().get_context_data(**kwargs)
 #         form = LoginForm()
 #         context['form_data'] = form
-#         print(form)
 #         return context
 
 
@@ -156,6 +155,74 @@ class RegisterPage(FormView):
 class ProfilePage(LoginRequiredMixin, TemplateView):
     template_name = "blog/profile.html"
 
+@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
+def api_total_like(request):
+    user = request.user
+    slug = request.GET.get('slug')
+
+    if not slug:
+        return Response({
+            'ok': False
+        })
+
+    if not user.is_authenticated:
+        return Response({
+            'ok': False
+        })
+    blog = Blog.objects.filter(
+        is_public=True,
+        is_removed=False,
+        slug=slug
+    ).only('total_likes').first()
+    if not blog:
+        return Response({
+            'ok': False
+        })
+
+    user = User.objects.get(
+        username=user.username
+    )
+
+    if BlogLike.objects.filter(
+        user=user,
+        blog=blog
+    ).exists():
+        check_like = True
+    else:
+        check_like = False
+    return Response({
+        'ok': True,
+        'data': {
+            'isLiked': check_like,
+            'totalLikes': blog.total_likes,
+            'user': str(user)
+        }
+    }
+    )
+
+@csrf_exempt
+@api_view(['POST'])
+def add_like(request):
+    if request.method == 'POST':
+        user = request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': "Ban chua dang nhap"
+            })
+        slug = request.data.get('slug')
+        try:
+            blog = Blog.objects.get(slug=slug)
+        except Blog.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        BlogLike.objects.create(user=user, blog=blog)
+        return Response({
+            'ok': True
+        })
+
 
 def logout_page(request):
     logout(request)
@@ -171,7 +238,7 @@ def get_content_blog(request, **kwargs):
     )
     if request.method == 'GET':
         serializer = BlogSerializer(queryset, many=True)
-        print(reverse("blog:list"))
-        print(reverse("blog:api_blog", args=[kwargs.get('slug')]))
+        # print(reverse("blog:list"))
+        # print(reverse("blog:api_blog", args=[kwargs.get('slug')]))
         return Response(serializer.data)
 

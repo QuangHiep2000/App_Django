@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100, null=True)
     slug = models.SlugField(null=True)
@@ -16,6 +17,7 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_public = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
+    total_likes = models.PositiveIntegerField(default=0)
 
 
 class BlogLike(models.Model):
@@ -24,6 +26,4 @@ class BlogLike(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # def get_absolute_url(self):
     #     return reverse("url_api_content_blog", kwargs={"slug": self.slug})
-
-
 
