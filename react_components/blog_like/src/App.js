@@ -1,8 +1,9 @@
 // import logo from './logo.svg';
 import './App.css';
 import React, {useState, useEffect} from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios'
-import {addBlogLikeAPI, getBlogLikeAPI, SLUG} from "./api";
+import {addBlogLikeAPI, getBlogLikeAPI, SLUG, CHECK_USER_LOGIN} from "./api";
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -13,6 +14,8 @@ function App() {
     const [dataLike, setDataLike] = useState({});
     const [checkLike, setCheckLike] = useState(false)
     const [countLike, setCountLike] = useState(0)
+
+    // const notify = () => ;toast('Here is your toast.')
     // function getCookie(name) {
     //     if (!document.cookie) {
     //         return null;
@@ -58,17 +61,26 @@ function App() {
             //         is_liked: true, slug: window.BLOG_LIKE_API.SLUG, user: dataLike.user
             //     }
             // });
-
-            await addBlogLikeAPI({
-                 slug: SLUG
-            })
-            setCountLike(countLike + 1)
-            setCheckLike(true)
+            if (CHECK_USER_LOGIN){
+                await addBlogLikeAPI({
+                    slug: SLUG
+                })
+                setCountLike(countLike + 1)
+                setCheckLike(true)
+                toast.success('Like is success!')
+            }
+            else{
+                toast.error("You not Login!")
+            }
         }
     }
 
     return (<div className="App">
         <div className={"container-like"}>
+            <div><Toaster
+                position="top-center"
+                reverseOrder={false}
+            /></div>
             <div className={"total-like"}>Lượt thích: {dataLike && countLike}</div>
             <div onClick={handleClick}
                  className={"like" + (checkLike ? " class_is_liked" : "")}>like <i

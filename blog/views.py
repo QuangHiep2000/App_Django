@@ -91,8 +91,8 @@ class AdminPage(TemplateView):
             context['data_list_new'] = serializer.data
             return context
 
-
-class BlogSlug(LoginRequiredMixin, TemplateView):
+# class BlogSlug(LoginRequiredMixin, TemplateView):
+class BlogSlug(TemplateView):
     template_name = "blog/blog_slug.html"
 
     def get_context_data(self, **kwargs):

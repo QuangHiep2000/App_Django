@@ -78,14 +78,19 @@
         }
     </script>
     <script>
+        let isLogin = false
+        {% if user.is_authenticated %}
+            isLogin = true
+        {% endif %}
         window.BLOG_LIKE_APIS = {
             SLUG: {{ slug }},
             BASE_URL: "",
             GET_BLOG_LIKE: "{% url 'blog:api_like' %}",
             ADD_BLOG_LIKE: "{% url 'blog:add_like' %}",
+            CHECK_USER_LOGIN: isLogin,
         }
     </script>
-    <script src="{% static 'components/blog_like/js/main.8ea6fd8c.js' %}"></script>
+    <script src="{% static 'components/blog_like/js/main.ece42361.js' %}"></script>
 {% endblock %}
 </html>
 

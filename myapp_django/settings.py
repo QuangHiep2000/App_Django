@@ -141,15 +141,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-try:
-    from myapp_django.local_settings import *
-
-    LOGIN_URL = '/login/'
-
-    LOGIN_REDIRECT_URL = '/'
-except ImportError:
-    pass
-
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -240,3 +231,13 @@ if DEBUG:
 #     INTERNAL_IPS = ('127.0.0.1',)
 #     INSTALLED_APPS += ['debug_toolbar']
 #     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+
+try:
+    from myapp_django.local_settings import *
+
+    LOGIN_URL = '/login/'
+
+    LOGIN_REDIRECT_URL = '/'
+except ImportError:
+    pass
