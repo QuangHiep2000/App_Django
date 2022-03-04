@@ -9,8 +9,6 @@ from .models import Blog, BlogLike
 def update_blog(sender, instance, created, **kwargs):
 
     if created:
-        print(sender)
-        print(instance)
         Blog.objects.filter(
             id=instance.blog.id
         ).update(total_likes=instance.blog.total_likes + 1)

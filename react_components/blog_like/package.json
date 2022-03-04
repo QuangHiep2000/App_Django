@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
     "@testing-library/user-event": "^13.5.0",
@@ -13,7 +15,21 @@
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.2.0",
     "react-scripts": "5.0.0",
+    "styled-components": "^5.3.3",
+    "tailwindcss": "^3.0.23",
+    "twin.macro": "^2.8.2",
     "web-vitals": "^2.1.4"
+  },
+  "babelMacros": {
+    "twin": {
+      "config": "./src/tailwind.config.js",
+      "preset": "styled-components"
+    }
+  },
+  "babelMacros": {
+    "twin": {
+      "preset": "emotion"
+    }
   },
   "scripts": {
     "start": "react-scripts start",
@@ -38,5 +54,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@emotion/babel-plugin": "^11.7.2"
   }
 }

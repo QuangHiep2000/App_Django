@@ -30,6 +30,7 @@
 
 .container-like{
   display: flex;
+  height: 30px;
 }
 
 .total-like{
@@ -37,14 +38,14 @@
   margin-right: 5px;
 }
 
-.like{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 3px;
-  margin-bottom: 5px;
-}
+/*.like{*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  align-items: center;*/
+/*  cursor: pointer;*/
+/*  margin-left: 3px;*/
+/*  margin-bottom: 5px;*/
+/*}*/
 
 .class_is_liked{
   color: blue;
