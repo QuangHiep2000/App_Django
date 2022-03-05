@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from autoslug import AutoSlugField
 
 
 
@@ -11,7 +12,7 @@ class Category(models.Model):
 class Blog(models.Model):
     category = models.ForeignKey(Category, related_name='+', on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=200, null=True)
-    slug = models.SlugField(null=True)
+    slug = AutoSlugField(max_length=255, unique=True, populate_from='title', editable=True, blank=True)
     content = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

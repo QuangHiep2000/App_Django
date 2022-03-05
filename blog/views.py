@@ -19,7 +19,7 @@ from rest_framework.response import Response
 
 from blog.models import Blog, Category, BlogLike
 from blog.forms import LoginForm
-from blog.serializers import BlogSerializer, BlogLikeSerializer
+from blog.serializers import BlogSerializer, BlogLikeSerializer, CategorySerializer
 from rest_framework.decorators import api_view
 
 
@@ -222,6 +222,62 @@ def add_like(request):
         return Response({
             'ok': True
         })
+
+@csrf_exempt
+@api_view(['GET'])
+def get_category(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({
+            'ok': False,
+            'msg': "Ban chua dang nhap"
+        })
+    category = Category.objects.all()
+    if not category:
+        return Response({
+            'ok': False
+        })
+    serializer = CategorySerializer(category, many=True)
+    return Response({
+        'ok': True,
+        'data': serializer.data
+    })
+
+
+@csrf_exempt
+@api_view(['POST'])
+def add_blog_new(request):
+    user = request.user
+    data = request.data
+    title = data.get('title', '')
+    content = data.get('content', '')
+    if not user.is_authenticated:
+        return Response({
+            'ok': False,
+            'msg': "Ban chua dang nhap"
+        })
+    try:
+        category = Category.objects.get(name=request.data.get('category', ''))
+    except Category.DoesNotExist:
+        return Response({
+            'ok': False
+        })
+
+    # blog_data = JSONParser().parse(request)
+    blog_slug = Blog.objects.create(
+        category=category,
+        title=title,
+        content=content,
+        is_public=True,
+    )
+    print(content)
+    return Response({
+        'ok': True,
+        'slug': blog_slug.slug
+    })
+
+class CreateNewBlog(TemplateView):
+    template_name = 'blog/create_new_blog.html'
 
 
 def logout_page(request):

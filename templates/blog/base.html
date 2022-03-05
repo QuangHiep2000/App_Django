@@ -10,7 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
     <link rel="stylesheet" href="{% static 'components/blog_like/css/main.515250b9.css' %}">
+    <link rel="stylesheet" href="{% static 'components/create_new_blog/css/main.4b9825f9.css' %}">
     <link rel="stylesheet" href="{% static 'css/blog/styles.css' %}">
+{#    <script src="https://cdn.tailwindcss.com"></script>#}
     {% block media_head %}
 
     {% endblock %}
@@ -27,8 +29,8 @@
 {#        </button>#}
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link text-white" href="#">About</a>
-                {#                <a class="nav-item nav-link text-white" href="#">Pricing</a>#}
+                <a class="nav-item nav-link text-white" href="{% url 'blog:create_new_blog' %}">Create Blog</a>
+{#                <a class="nav-item nav-link text-white" href="#">Pricing</a>#}
                 {#                <a class="nav-item nav-link disabled text-white" href="#">Disabled</a>#}
             </div>
         </div>

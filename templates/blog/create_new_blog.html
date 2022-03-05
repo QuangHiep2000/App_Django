@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block title %}
+    Create Blog
+{% endblock %}
+
+{% block media_head %}
+    <link rel="stylesheet" href="{% static 'components/create_new_blog/css/main.e6c13ad2.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id="create_new_blog"></div>
+{% endblock %}
+
+{% block media_footer %}
+    <script>
+        let isLogin
+        {% if user.is_authenticated %}
+            isLogin = true
+        {% endif %}
+        window.CATEGORY_APIS = {
+            BASE_URL: "",
+            GET_CATEGORY_URL: "{% url 'blog:api_category' %}",
+            ADD_BLOG_NEW_URL: "{% url 'blog:create_new_blog' %}",
+            CHECK_USER_LOGIN: isLogin,
+            BLOG_SLUG_URL: "{% url 'blog:blog_slug_life_new' %}"
+        }
+    </script>
+    <script src="{% static 'components/create_new_blog/js/main.2d53fab4.js' %}"></script>
+{% endblock %}
