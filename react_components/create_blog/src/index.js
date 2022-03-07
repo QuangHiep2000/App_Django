@@ -2,13 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import App from "./App";
+// import CreateBlog from "./components/CreateBlog";
+import EditBlog from "./components/EditBlog";
+
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <CreateBlog />
+//   </React.StrictMode>,
+//   document.getElementById('create_new_blog')
+// );
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <EditBlog />
   </React.StrictMode>,
-  document.getElementById('create_new_blog')
+  document.getElementById('edit_new_blog')
 );
 
 // If you want to start measuring performance in your app, pass a function

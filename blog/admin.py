@@ -9,6 +9,7 @@ class BlogAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_public', 'is_removed')
     list_editable = ('total_likes', 'is_removed')
+    save_on_top = True
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

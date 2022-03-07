@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block media_head %}
-    <link rel="stylesheet" href="{% static 'components/create_new_blog/css/main.e6c13ad2.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -21,7 +20,7 @@
         window.CATEGORY_APIS = {
             BASE_URL: "",
             GET_CATEGORY_URL: "{% url 'blog:api_category' %}",
-            ADD_BLOG_NEW_URL: "{% url 'blog:create_new_blog' %}",
+            ADD_BLOG_NEW_URL: "{% url 'blog:api_add_blog_new' %}",
             CHECK_USER_LOGIN: isLogin,
             BLOG_SLUG_URL: "{% url 'blog:blog_slug_life_new' %}"
         }

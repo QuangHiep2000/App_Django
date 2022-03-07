@@ -108,10 +108,15 @@ class BlogSlug(TemplateView):
             category=blog.category
         )
         permission_class = AllowAny
+
         if self.request.method == 'GET':
+            user = self.request.user
             serializer = BlogSerializer(queryset, many=True)
             context['data_list_blog_slug'] = serializer.data
-            context['slug'] = kwargs.get('slug')
+            context['blog_detail'] = blog
+            # context['slug'] = kwargs.get('slug')
+            # print(is_my_blog)
+            # context['is_my_blog'] = is_my_blog
             return context
 
 
@@ -198,8 +203,7 @@ def api_total_like(request):
             'totalLikes': blog.total_likes,
             'user': str(user)
         }
-    }
-    )
+    })
 
 @csrf_exempt
 @api_view(['POST'])
@@ -269,8 +273,8 @@ def add_blog_new(request):
         title=title,
         content=content,
         is_public=True,
+        user=user,
     )
-    print(content)
     return Response({
         'ok': True,
         'slug': blog_slug.slug
@@ -279,6 +283,89 @@ def add_blog_new(request):
 class CreateNewBlog(TemplateView):
     template_name = 'blog/create_new_blog.html'
 
+
+@csrf_exempt
+@api_view(['GET'])
+def api_my_blog(request):
+    user = request.user
+    slug = request.GET.get('slug')
+
+    if not slug:
+        return Response({
+            'ok': False
+        })
+
+    if not user.is_authenticated:
+        return Response({
+            'ok': False
+        })
+
+    user = User.objects.get(
+        username=user.username
+    )
+    blog = Blog.objects.filter(
+        is_public=True,
+        is_removed=False,
+        slug=slug,
+        user=user
+    ).first()
+    print(blog)
+    if blog:
+        print(True)
+        current_category = Category.objects.get(id=blog.category.id)
+        category = Category.objects.all()
+        serializer = CategorySerializer(category, many=True)
+        return Response({
+            'ok': True,
+            'data': {
+                'title': blog.title,
+                'content': blog.content,
+                'currentCategory': current_category.name,
+                'category': serializer.data,
+            },
+            'isMyBlog': True
+        })
+    else:
+        print(False)
+        return Response({
+            'ok': False,
+            'isMyBlog': False
+        })
+
+
+@csrf_exempt
+@api_view(['PUT'])
+def edit_blog(request):
+    user = request.user
+    data = request.data
+    title = data.get('title', '')
+    content = data.get('content', '')
+    slug = data.get('slug', '')
+    if not user.is_authenticated:
+        return Response({
+            'ok': False,
+            'msg': "Ban chua dang nhap"
+        })
+    try:
+        category = Category.objects.get(name=request.data.get('category', ''))
+    except Category.DoesNotExist:
+        return Response({
+            'ok': False
+        })
+    Blog.objects.filter(slug=slug).update(
+        category=category,
+        title=title,
+        content=content
+    )
+
+    return Response({
+        'ok': True,
+        # 'slug': blog_update.slug,
+    })
+
+
+class EditBlog(TemplateView):
+    template_name = 'blog/edit_blog.html'
 
 def logout_page(request):
     logout(request)

@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block title %}
+    Create Blog
+{% endblock %}
+
+{% block media_head %}
+
+{% endblock %}
+
+{% block content %}
+    <div id="edit_new_blog"></div>
+{% endblock %}
+
+{% block media_footer %}
+    <script>
+        let isLogin
+        {% if user.is_authenticated %}
+            isLogin = true
+        {% endif %}
+        window.CATEGORY_APIS = {
+            SLUG: "tieu-thuyet-va-nhung-su-that-thu-vi",
+            BASE_URL: "",
+            GET_MY_BLOG_URL: "{% url 'blog:api_my_blog' %}",
+            EDIT_BLOG_NEW_URL: "{% url 'blog:api_edit_blog' %}",
+            CHECK_USER_LOGIN: isLogin,
+            BLOG_SLUG_URL: "{% url 'blog:blog_slug_life_new' %}"
+        }
+    </script>
+    <script src="{% static 'components/edit_blog/js/main.9091b2d2.js' %}"></script>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from autoslug import AutoSlugField
-
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -19,7 +19,11 @@ class Blog(models.Model):
     is_public = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
     total_likes = models.PositiveIntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='+')
+    content_safe = models.TextField(null=True, blank=True)
 
+    def get_absolute_url(self):
+        return reverse('blog:blog_slug', args=[self.slug])
 
 class BlogLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

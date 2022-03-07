@@ -49,7 +49,8 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="create_new_blog"></div>
+<!--    <div id="create_new_blog"></div>-->
+    <div id="edit_new_blog"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -62,10 +63,11 @@
     -->
   <script>
       window.CATEGORY_APIS={
+        SLUG: "tieu-thuyet-va-nhung-su-that-thu-vi",
         BASE_URL: "http://localhost:8000",
-        GET_CATEGORY_URL: "/api/category/",
-        ADD_BLOG_NEW_URL: "/api/add-blog-new/",
-        BLOG_SLUG_URL: "/blog/blog-",
+        GET_MY_BLOG_URL: "/api/my-blog/",
+        EDIT_BLOG_NEW_URL: "/api/edit-blog/",
+        BLOG_SLUG_URL: "/blog/",
         CHECK_USER_LOGIN: true
       }
   </script>
