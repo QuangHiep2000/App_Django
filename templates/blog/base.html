@@ -20,10 +20,30 @@
 
     {% block css %}
         <style>
-            .dark-mode {
-                background-color: #1d1d22;
-                color: #c4def5;
+        :root {
+            --dark-text-color: #c4def5;
+            --dark-bg-color: #1d1d22;
+            --light-text-color: #000;
+            --light-bg-color: #fff;
+        }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    color: var(--dark-text-color);
+                    background: var(--dark-bg-color);
+                }
             }
+
+            @media (prefers-color-scheme: light) {
+                body {
+                    color: var(--light-text-color);
+                    background: var(--light-bg-color);
+                }
+            }
+
+            {#.dark-mode {#}
+            {#    background-color: #1d1d22;#}
+            {#    color: #c4def5;#}
+            {#}#}
 
             .btn-dark-mode {
                 cursor: pointer;
