@@ -13,48 +13,106 @@
     <link rel="stylesheet" href="{% static 'components/create_new_blog/css/main.4b9825f9.css' %}">
     <link rel="stylesheet" href="{% static 'css/blog/styles.css' %}">
     <link rel="stylesheet" href="{% static 'components/edit_blog/css/main.1fc09bb7.css' %}">
-{#    <script src="https://cdn.tailwindcss.com"></script>#}
+    {#    <script src="https://cdn.tailwindcss.com"></script>#}
     {% block media_head %}
 
     {% endblock %}
+
+    {% block css %}
+        <style>
+            .dark-mode {
+                background-color: #1d1d22;
+                color: #c4def5;
+            }
+
+            .btn-dark-mode {
+                cursor: pointer;
+                border: 1px solid #54cfc9;
+                width: 145px;
+                height: 35px;
+                border-radius: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .form-check-input:checked {
+                background-color: #54cfc9;
+            }
+        </style>
+    {% endblock %}
 </head>
 
-<body>
-{% block header %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-dark">
-        <a class="navbar-brand text-white" href="/"><img style="width: 60px; margin-left: 10px"
-            src="https://blog.vietnovel.com/content/images/2019/10/Vietnovel-Origin-Logo-1.svg"></a>
-{#        <button class="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"#}
-{#                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">#}
-{#            <span class="navbar-toggler-icon"></span>#}
-{#        </button>#}
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link text-white" href="{% url 'blog:create_new_blog' %}">Create Blog</a>
-{#                <a class="nav-item nav-link text-white" href="#">Pricing</a>#}
-                {#                <a class="nav-item nav-link disabled text-white" href="#">Disabled</a>#}
+<body class="">
+<div id="app">
+    {% block header %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light bg-dark">
+            <a class="navbar-brand text-white" href="/"><img style="width: 60px; margin-left: 10px"
+                                                             src="https://blog.vietnovel.com/content/images/2019/10/Vietnovel-Origin-Logo-1.svg"></a>
+            {#        <button class="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"#}
+            {#                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">#}
+            {#            <span class="navbar-toggler-icon"></span>#}
+            {#        </button>#}
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link text-white" href="{% url 'blog:create_new_blog' %}">Create Blog</a>
+                    {#                <a class="nav-item nav-link text-white" href="#">Pricing</a>#}
+                    {#                <a class="nav-item nav-link disabled text-white" href="#">Disabled</a>#}
+                </div>
             </div>
-        </div>
-        {% if user.is_authenticated %}
-            <div class="d-flex align-items-center" style="margin-right: 10px;">
-                <span class="text-white" style="margin-right: 15px; font-size: 28px">{{ user.username }}</span>
-                <button style="font-size: 20px; background-color: darkviolet; border: none; border-radius: 4px; width: 80px">
-                    <a
-                            class="text-decoration-none text-white d-flex align-items-center"
-                            href="{% url 'blog:logout' %}">Logout</a></button>
-            </div>
-        {% else %}
-            <div class="" style="margin-right: 10px;">
-                <button style="background-color: darkviolet; border: none; border-radius: 6px; width: 80px;"><a
-                        class="text-decoration-none text-white" href="{% url 'blog:login' %}">Login</a></button>
-            </div>
-        {% endif %}
-    </nav>
+            <label class="form-check form-switch mr-2 mt-2 btn-dark-mode" for="flexSwitchCheckDefault"
+                   onclick="handleClick()" style="cursor: pointer">
+                <input class="form-check-input mb-1 mr-2" type="checkbox" id="flexSwitchCheckDefault"
+                       style="cursor: pointer">
+                <label for="flexSwitchCheckDefault" class="text-white" style="cursor: pointer">DarkMode</label>
+                {#            <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label>#}
+            </label>
+            {% if user.is_authenticated %}
+                <div class="d-flex align-items-center" style="margin-right: 10px;">
+                    <span class="text-white" style="margin-right: 15px; font-size: 28px">{{ user.username }}</span>
+                    <button style="font-size: 20px; background-color: darkviolet; border: none; border-radius: 4px; width: 80px">
+                        <a
+                                class="text-decoration-none text-white d-flex align-items-center"
+                                href="{% url 'blog:logout' %}">Logout</a></button>
+                </div>
+            {% else %}
+                <div class="" style="margin-right: 10px;">
+                    <button style="background-color: darkviolet; border: none; border-radius: 6px; width: 80px;"><a
+                            class="text-decoration-none text-white" href="{% url 'blog:login' %}">Login</a></button>
+                </div>
+            {% endif %}
+        </nav>
 
-{% endblock %}
-{% block content %}{% endblock %}
-{% block footer %}{% endblock %}
-{% block media_footer %}{% endblock %}
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block footer %}{% endblock %}
+    {% block media_footer %}
+
+    {% endblock %}
+</div>
+<script>
+    const elementCheckMode = document.getElementById("flexSwitchCheckDefault")
+    const elementTagBody = document.getElementById("app")
+    console.log(elementTagBody.classList)
+    if (localStorage.getItem('checkDarkMode') === 'true') {
+        elementCheckMode.checked = true
+        elementTagBody.classList.add("dark-mode")
+    } else {
+        elementCheckMode.checked = false
+        elementTagBody.classList.remove("dark-mode")
+    }
+
+    function handleClick() {
+        if (elementCheckMode.checked === true) {
+            console.log(elementCheckMode.classList)
+            elementTagBody.classList.add("dark-mode")
+            localStorage.setItem('checkDarkMode', "true")
+        } else {
+            elementTagBody.classList.remove("dark-mode")
+            localStorage.setItem('checkDarkMode', "false")
+        }
+    }
+</script>
 </body>
 </html>
 
