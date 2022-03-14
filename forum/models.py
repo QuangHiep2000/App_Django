@@ -61,3 +61,14 @@ class Reply(models.Model):
     user_agent = models.TextField(blank=True)
     edited_at = models.DateTimeField(blank=True, null=True)
     edited_by = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
+
+
+class ReplyComment(models.Model):
+    user = models.ForeignKey(User, related_name='+', on_delete=models.PROTECT)
+    reply = models.ForeignKey(Reply, related_name='comments', on_delete=models.CASCADE)
+    content = models.TextField(blank=True, max_length=500)
+    mention_to = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
+    removed = models.BooleanField(default=False)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True)
+
