@@ -8,7 +8,7 @@ app_name = "blog"
 
 urlpatterns = [
     path('', views.AdminPage.as_view()),
-    path('list/', views.blog_list, name='list'),
+    path('api/list/', views.blog_list, name='list'),
     path('category/<str:slug>/', views.CategoryPagination.as_view()),
     path('blog/<str:slug>/', views.BlogSlug.as_view(), name='blog_slug'),
     path('blog/<str:slug>/content', views.get_content_blog, name='api_blog'),
@@ -24,6 +24,9 @@ urlpatterns = [
     path('api/my-blog/', views.api_my_blog, name='api_my_blog'),
     path('api/edit-blog/', views.edit_blog, name='api_edit_blog'),
     path('edit-blog/<str:slug>/', views.EditBlog.as_view(), name='edit_blog'),
+    path('blog/<str:slug>', views.get_content_blog, name='api_blog'),
+    path('api/blog-list-category/', views.BlogListCategoryAPIView.as_view(), name='blog_list_api'),
+    path('create-user/', views.create_user, name='create_user'),
 ]
 
 # router = DefaultRouter()

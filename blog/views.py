@@ -13,6 +13,7 @@ from django.views.generic import TemplateView, FormView
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.generics import ListAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -91,6 +92,7 @@ class AdminPage(TemplateView):
             context['data_list_new'] = serializer.data
             return context
 
+
 # class BlogSlug(LoginRequiredMixin, TemplateView):
 class BlogSlug(TemplateView):
     template_name = "blog/blog_slug.html"
@@ -160,6 +162,7 @@ class RegisterPage(FormView):
 class ProfilePage(LoginRequiredMixin, TemplateView):
     template_name = "blog/profile.html"
 
+
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
 def api_total_like(request):
@@ -190,8 +193,8 @@ def api_total_like(request):
     )
 
     if BlogLike.objects.filter(
-        user=user,
-        blog=blog
+            user=user,
+            blog=blog
     ).exists():
         check_like = True
     else:
@@ -204,6 +207,7 @@ def api_total_like(request):
             'user': str(user)
         }
     })
+
 
 @csrf_exempt
 @api_view(['POST'])
@@ -226,6 +230,7 @@ def add_like(request):
         return Response({
             'ok': True
         })
+
 
 @csrf_exempt
 @api_view(['GET'])
@@ -279,6 +284,7 @@ def add_blog_new(request):
         'ok': True,
         'slug': blog_slug.slug
     })
+
 
 class CreateNewBlog(TemplateView):
     template_name = 'blog/create_new_blog.html'
@@ -367,21 +373,87 @@ def edit_blog(request):
 class EditBlog(TemplateView):
     template_name = 'blog/edit_blog.html'
 
+
 def logout_page(request):
     logout(request)
     return redirect('/login/')
 
+
 @csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def get_content_blog(request, **kwargs):
-    queryset = Blog.objects.filter(
+    slug = request.GET.get('slug', '')
+    blog = Blog.objects.get(
         is_public=True,
         is_removed=False,
-        slug=kwargs.get('slug')
+        slug=slug
     )
-    if request.method == 'GET':
-        serializer = BlogSerializer(queryset, many=True)
-        # print(reverse("blog:list"))
-        # print(reverse("blog:api_blog", args=[kwargs.get('slug')]))
-        return Response(serializer.data)
 
+    return Response(
+        {
+            'ok': True,
+            'data': {
+                'user': blog.user.username,
+                'title': blog.title,
+                'content_safe': blog.content_safe,
+                'create_at': blog.created_at
+            }
+        }
+    )
+
+
+class BlogListAPIView(ListAPIView):
+    serializer_class = BlogSerializer
+    permission_classes = [AllowAny]
+    def get_queryset(self):
+        queryset = Blog.objects.filter(
+            is_public=True,
+            is_removed=False).order_by('created_at')
+
+        # serializer_class = BlogSerializer(qs, many=True)
+        # print(serializer_class.data)
+        return queryset
+
+
+class BlogListCategoryAPIView(ListAPIView):
+    serializer_class = BlogSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        slug = self.request.GET.get('slug', '')
+        if not slug:
+            return []
+
+
+        _blog = Blog.objects.filter(
+            slug=slug
+        ).only('id', 'category_id').first()
+        if not _blog:
+            return []
+        blog = Blog.objects.select_related('category').filter(
+            is_public=True,
+            is_removed=False,
+            category_id=_blog.category_id
+        ).exclude(id=_blog.id).order_by('-created_at')[:3]
+
+        return blog
+
+
+@csrf_exempt
+@api_view(['POST'])
+def create_user(request):
+    if request.method == 'POST':
+        user = request.data.get('username', '')
+        password = request.data.get('password', '')
+        print(user)
+        _user = User.objects.get(username=user)
+        if not _user:
+            return Response({
+                'ok': False
+            })
+        print(_user.password)
+        if _user.password == password:
+            print("da dang nhap")
+            return Response({
+                'ok': True
+            })
