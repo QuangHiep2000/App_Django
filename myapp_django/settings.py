@@ -44,11 +44,11 @@ INSTALLED_APPS = [
 
     'blog.apps.BlogConfig',
 
-    'Forum.apps.ForumConfig'
-
     "corsheaders",
 
     "debug_toolbar",
+
+    'forum.apps.ForumConfig',
 ]
 
 MIDDLEWARE = [
