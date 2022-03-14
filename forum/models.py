@@ -47,3 +47,17 @@ class Story(models.Model):
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     user_agent = models.TextField(blank=True)
 
+
+class Reply(models.Model):
+    user = models.ForeignKey(User, related_name='+', on_delete=models.PROTECT)
+    story = models.ForeignKey(Story, related_name='replies', on_delete=models.CASCADE)
+    reply_order = models.IntegerField(default=0)
+    content = models.TextField(blank=True)
+    content_safe = models.TextField(blank=True)
+    removed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True)
+    edited_at = models.DateTimeField(blank=True, null=True)
+    edited_by = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
