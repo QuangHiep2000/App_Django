@@ -15,32 +15,35 @@ class Category(models.Model):
     color_code = models.CharField(max_length=10, default="#0a8ddf")
 
 
+class Story(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    user = models.ForeignKey(User, related_name='+', on_delete=models.PROTECT)
+    content = models.TextField(blank=True)
+    content_safe = models.TextField(blank=True)
+    title = models.CharField(max_length=255, blank=True)
+    category = models.ManyToManyField(Category, related_name='+', blank=True)
+    last_activity_by = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
+    last_activity_at = models.DateTimeField(auto_now_add=True, editable=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    scheduled_at = models.DateTimeField(blank=True, null=True)
+    published_at = models.DateTimeField(auto_now_add=True, editable=True)
+    STORY_STATUS_CHOICES = (
+        ('P', 'Công Khai'),
+        ('R', 'Đã Xóa'),
+        ('S', 'Đang Lên Lịch'),
+    )
+    status = models.CharField(default='P', db_index=True, max_length=1, choices=STORY_STATUS_CHOICES)
+    closed = models.BooleanField(default=False, db_index=True)
+    featured_until = models.DateTimeField(blank=True, null=True)
+    featured = models.BooleanField(default=False)
+    edited_at = models.DateTimeField(blank=True, null=True)
+    edited_by = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
+    num_views = models.PositiveIntegerField(default=0)
+    num_likes = models.PositiveIntegerField(default=0)
+    num_replies = models.PositiveIntegerField(default=0)
+    num_comments = models.PositiveIntegerField(default=0)
+    num_participants = models.PositiveIntegerField(default=-1)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True)
 
-# class Category(models.Model):
-#     name = models.CharField(max_length=100, null=True)
-#     slug = models.SlugField(null=True)
-#
-#
-# class Blog(models.Model):
-#     category = models.ForeignKey(Category, related_name='+', on_delete=models.CASCADE, null=True, blank=True)
-#     title = models.CharField(max_length=200, null=True)
-#     slug = AutoSlugField(max_length=255, unique=True, populate_from='title', editable=True, blank=True)
-#     content = models.TextField(null=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#     is_public = models.BooleanField(default=False)
-#     is_removed = models.BooleanField(default=False)
-#     total_likes = models.PositiveIntegerField(default=0)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='+')
-#     content_safe = models.TextField(null=True, blank=True)
-#
-#     def get_absolute_url(self):
-#         return reverse('blog:blog_slug', args=[self.slug])
-#
-# class BlogLike(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-#     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     # def get_absolute_url(self):
-#     #     return reverse("url_api_content_blog", kwargs={"slug": self.slug})
-#
