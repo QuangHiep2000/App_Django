@@ -16,7 +16,7 @@ class Category(models.Model):
 
 
 class Story(models.Model):
-    code = models.CharField(max_length=20, unique=True)
+    code = models.CharField(max_length=20, unique=True, blank=True)
     user = models.ForeignKey(User, related_name='+', on_delete=models.PROTECT)
     content = models.TextField(blank=True)
     content_safe = models.TextField(blank=True)

@@ -405,6 +405,7 @@ def get_content_blog(request, **kwargs):
 class BlogListAPIView(ListAPIView):
     serializer_class = BlogSerializer
     permission_classes = [AllowAny]
+
     def get_queryset(self):
         queryset = Blog.objects.filter(
             is_public=True,
@@ -423,7 +424,6 @@ class BlogListCategoryAPIView(ListAPIView):
         slug = self.request.GET.get('slug', '')
         if not slug:
             return []
-
 
         _blog = Blog.objects.filter(
             slug=slug
