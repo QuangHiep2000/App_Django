@@ -177,4 +177,18 @@ class AddLikeAPI(ListCreateAPIView):
         })
 
 
+class APIStoryDetail(ListAPIView):
+    serializer_class = StorySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        code = self.request.GET.get('code', '')
+        if not code:
+            return []
+        story = Story.objects.filter(status='P', code=code).only(
+            'code', 'content_safe', 'title', 'category', 'created_at',
+            'num_views', 'num_likes', 'num_replies', 'num_comments', 'updated_at', 'user')
+        if not story:
+            return []
+        return story
 
