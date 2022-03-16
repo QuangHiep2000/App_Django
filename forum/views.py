@@ -81,28 +81,39 @@ class UpdatePOST(ListCreateAPIView):
         code = data.get('code', '')
         # user = data.get('user', '')
         # _user = User.objects.get(id=user)
-        try:
-            _story = Story.objects.get(code=code)
-            print(_story)
-        except Story.DoesNotExist:
-            return []
-        try:
-            _category = Category.objects.get(name=category)
-        except Category.DoesNotExist:
-            return []
 
-        Story.objects.filter(code=code).update(
-            # user=_user,
-            content=content,
-            title=title,
-        )
+        if Story.objects.filter(
+            user=user
+        ).exists():
+            try:
+                _story = Story.objects.get(code=code)
+                print(_story)
+            except Story.DoesNotExist:
+                return []
+            try:
+                _category = Category.objects.get(name=category)
+            except Category.DoesNotExist:
+                return []
 
-        _story.category.add(_category)
-        category_will_delete = Category.objects.filter().exclude(id=_category.id)
-        for i in category_will_delete:
-            temp = Category.objects.get(id=i.id)
-            _story.category.remove(temp)
+            Story.objects.filter(code=code).update(
+                # user=_user,
+                content=content,
+                title=title,
+            )
 
-        return Response({
-            'ok': True
-        })
+            _story.category.add(_category)
+            category_will_delete = Category.objects.filter().exclude(id=_category.id)
+            for i in category_will_delete:
+                temp = Category.objects.get(id=i.id)
+                _story.category.remove(temp)
+
+            return Response({
+                'ok': True
+            })
+
+        else:
+            return Response({
+                'ok': False
+            })
+
+
