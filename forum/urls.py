@@ -11,5 +11,6 @@ urlpatterns = [
     path('update-post/', views.UpdatePOST.as_view(), name='update_post'),
     path('api/list-story/', views.StoryListAPIView.as_view(), name='api_list_story'),
     path('api/add-story-like/', views.AddLikeAPI.as_view(), name='api_add_story_like'),
-    path('api/story-detail/', views.APIStoryDetail.as_view(), name='story_detail'),
+    path('api/story-detail/', views.APIStoryDetail.as_view(), name='api_story_detail'),
+    path('api/delete-story/', views.APIDeleteStory.as_view(), name='api_delete_story'),
 ]

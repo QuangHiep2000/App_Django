@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, DestroyAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -192,3 +192,30 @@ class APIStoryDetail(ListAPIView):
             return []
         return story
 
+
+class APIDeleteStory(DestroyAPIView):
+    serializer_class = StorySerializer
+    permission_classes = [AllowAny]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        data = self.request.data
+        code = data.get('code', '')
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+
+        try:
+            story = Story.objects.get(code=code, user=user)
+        except Story.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+
+        story.delete()
+
+        return Response({
+            'ok': True
+        })
