@@ -9,7 +9,7 @@ from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True, blank=True)
-    slug = AutoSlugField(unique=True, editable=True, blank=True)
+    slug = AutoSlugField(unique=True, editable=True, blank=True,  populate_from='name', max_length=255)
     desc_safe = models.TextField(blank=True)
     order = models.PositiveSmallIntegerField(default=0)
     color_code = models.CharField(max_length=10, default="#0a8ddf")

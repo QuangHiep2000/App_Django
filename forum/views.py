@@ -11,16 +11,6 @@ from .models import Story, Category, Reply, ReplyComment
 
 # Create your views here.
 
-@csrf_exempt
-@api_view(['GET'])
-def get_content_blog(request, **kwargs):
-    return Response({
-        'ok': True,
-        'data': {
-            'title': "hiep"
-        }
-    })
-
 # class CreatePOST(ListAPIView):
 #     serializer_class = StorySerializer
 #     permission_classes = [AllowAny]
@@ -42,7 +32,6 @@ class CreatePOST(ListCreateAPIView):
                 'msg': 'ban chua dan nhap'
             })
         data = self.request.data
-        print(data)
         content = data.get('content', '')
         title = data.get('title', '')
         category = data.get('category', '')
@@ -73,20 +62,47 @@ class CreatePOST(ListCreateAPIView):
             'ok': True
         })
 
-@csrf_exempt
-@api_view(['POST'])
-def create_post(request, **kwargs):
-    # user = request.user
-    # if not user.is_authenticated:
-    #     return Response({
-    #         'ok': False,
-    #         'msg': 'ban chua dan nhap'
-    #     })
-    data = request.data
-    print(data)
-    content = data.get('content', '')
-    title = data.get('title', '')
-    category = data.get('category', '')
-    return Response({
-        'ok': True
-    })
+
+class UpdatePOST(ListCreateAPIView):
+    serializer_class = StorySerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        data = self.request.data
+        content = data.get('content', '')
+        title = data.get('title', '')
+        category = data.get('category', '')
+        code = data.get('code', '')
+        # user = data.get('user', '')
+        # _user = User.objects.get(id=user)
+        try:
+            _story = Story.objects.get(code=code)
+            print(_story)
+        except Story.DoesNotExist:
+            return []
+        try:
+            _category = Category.objects.get(name=category)
+        except Category.DoesNotExist:
+            return []
+
+        Story.objects.filter(code=code).update(
+            # user=_user,
+            content=content,
+            title=title,
+        )
+
+        _story.category.add(_category)
+        category_will_delete = Category.objects.filter().exclude(id=_category.id)
+        for i in category_will_delete:
+            temp = Category.objects.get(id=i.id)
+            _story.category.remove(temp)
+
+        return Response({
+            'ok': True
+        })
