@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -115,5 +116,32 @@ class UpdatePOST(ListCreateAPIView):
             return Response({
                 'ok': False
             })
+
+
+class ListPagination(PageNumberPagination):
+    # serializer_class = StorySerializer
+    # permission_classes = [AllowAny]
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 20
+
+    def get_paginated_response(self, data):
+        return Response({
+            'nulItems': self.page.paginator.count,
+            'totalPages': self.page.paginator.num_pages,
+            'pageSize': self.page_size,
+            'currentPage': self.page.number,
+            'items': data,
+        })
+
+class StoryListAPIView(ListAPIView):
+    serializer_class = StorySerializer
+    permission_classes = [AllowAny]
+    pagination_class = ListPagination
+
+    def get_queryset(self):
+        list_story = Story.objects.filter(status='P').order_by('-updated_at')
+        return list_story
+
 
 
