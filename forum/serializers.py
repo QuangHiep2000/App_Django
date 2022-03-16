@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Story, Reply, ReplyComment
+from .models import Category, Story, Reply, ReplyComment, StoryLike
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -77,4 +77,14 @@ class ReplyCommentSerializer(serializers.ModelSerializer):
             'removed',
             'ip_address',
             'user_agent',
+        ]
+
+
+class StoryLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoryLike
+        fields = [
+            'user',
+            'story',
+            'created_at',
         ]

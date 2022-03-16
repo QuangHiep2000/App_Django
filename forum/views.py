@@ -7,8 +7,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .serializers import CategorySerializer, StorySerializer, ReplySerializer, ReplyCommentSerializer
-from .models import Story, Category, Reply, ReplyComment
+from .serializers import CategorySerializer, StorySerializer, ReplySerializer, ReplyCommentSerializer, StoryLikeSerializer
+from .models import Story, Category, Reply, ReplyComment, StoryLike
+
 
 # Create your views here.
 
@@ -90,11 +91,15 @@ class UpdatePOST(ListCreateAPIView):
                 _story = Story.objects.get(code=code)
                 print(_story)
             except Story.DoesNotExist:
-                return []
+                return Response({
+                    'ok': False
+                })
             try:
                 _category = Category.objects.get(name=category)
             except Category.DoesNotExist:
-                return []
+                return Response({
+                    'ok': False
+                })
 
             Story.objects.filter(code=code).update(
                 # user=_user,
@@ -142,6 +147,34 @@ class StoryListAPIView(ListAPIView):
     def get_queryset(self):
         list_story = Story.objects.filter(status='P').order_by('-updated_at')
         return list_story
+
+
+class AddLikeAPI(ListCreateAPIView):
+    serializer_class = StorySerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        data = self.request.data
+        code = data.get('code', '')
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        try:
+            story = Story.objects.get(code=code)
+        except Story.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        StoryLike.objects.create(
+            user=user,
+            story=story
+        )
+        return Response({
+            'ok': True
+        })
 
 
 
