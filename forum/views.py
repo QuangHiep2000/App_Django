@@ -219,3 +219,56 @@ class APIDeleteStory(DestroyAPIView):
         return Response({
             'ok': True
         })
+
+
+# class APIListComment(ListAPIView):
+#     serializer_class = ReplySerializer
+#     permission_classes = [AllowAny]
+#
+#     def get_queryset(self):
+#         code = self.request.GET.get('code', '')
+#         if not code:
+#             return []
+#         story = Story.objects.filter(code=code).first()
+#         if not story:
+#             return []
+#         reply = Reply.objects.filter(story=story)
+#         data = []
+#         for i in reply:
+#             print(i.id)
+#             _reply = Reply.objects.get(id=i.id)
+#             reply_comment = ReplyComment.objects.filter(reply=_reply)[:3]
+#             data.append({
+#                 'list_story': reply,
+#                 'reply_comment': reply_comment,
+#             })
+#         return data
+
+
+class APIAddReply(ListCreateAPIView):
+    serializer_class = ReplySerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        data = self.request.data
+        code = data.get('code', '')
+        content = data.get('content', '')
+        # _user = User.objects.get(id=user)
+        # print(_user)
+        # print(data)
+        try:
+            story = Story.objects.get(code=code)
+        except Story.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        Reply.objects.create(story=story, content=content, user=user)
+        return Response({
+            'ok': True
+        })

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from strgen import StringGenerator as SG
-from .models import Story
+from .models import Story, Reply
 from .utils import clean_html
 
 
@@ -16,3 +16,7 @@ def update_content_safe(sender, instance, **kwargs):
     # Dùng cho pre_save
     instance.content_safe = clean_html(instance.content)
 
+@receiver(pre_save, sender=Reply)
+def update_content_safe(sender, instance, **kwargs):
+    # Dùng cho pre_save
+    instance.content_safe = clean_html(instance.content)

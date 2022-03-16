@@ -13,4 +13,6 @@ urlpatterns = [
     path('api/add-story-like/', views.AddLikeAPI.as_view(), name='api_add_story_like'),
     path('api/story-detail/', views.APIStoryDetail.as_view(), name='api_story_detail'),
     path('api/delete-story/', views.APIDeleteStory.as_view(), name='api_delete_story'),
+    # path('api/list-comment/', views.APIListComment.as_view(), name='list_comment'),
+    path('api/add-reply/', views.APIAddReply.as_view(), name='api_add_reply'),
 ]
