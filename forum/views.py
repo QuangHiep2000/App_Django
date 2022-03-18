@@ -121,44 +121,6 @@ class UpdatePOST(UpdateAPIView):
                 'ok': False
             })
 
-        # if Story.objects.filter(
-        #     user=_user
-        # ).exists():
-        #     try:
-        #         _story = Story.objects.get(code=code)
-        #         print(_story)
-        #     except Story.DoesNotExist:
-        #         return Response({
-        #             'ok': False
-        #         })
-        #     try:
-        #         _category = Category.objects.get(name=category)
-        #     except Category.DoesNotExist:
-        #         return Response({
-        #             'ok': False
-        #         })
-        #
-        #     Story.objects.filter(code=code).update(
-        #         # user=_user,
-        #         content=content,
-        #         title=title,
-        #     )
-        #
-        #     _story.category.add(_category)
-        #     category_will_delete = Category.objects.filter().exclude(id=_category.id)
-        #     for i in category_will_delete:
-        #         temp = Category.objects.get(id=i.id)
-        #         _story.category.remove(temp)
-        #
-        #     return Response({
-        #         'ok': True
-        #     })
-        #
-        # else:
-        #     return Response({
-        #         'ok': False
-        #     })
-
 
 class ListPagination(PageNumberPagination):
     # serializer_class = StorySerializer
@@ -191,16 +153,14 @@ class AddLikeAPI(ListCreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        # user = request.user
+        user = request.user
         data = self.request.data
         code = data.get('code', '')
-        # if not user.is_authenticated:
-        #     return Response({
-        #         'ok': False,
-        #         'msg': 'ban chua dan nhap'
-        #     })
-        _user = data.get('user', '')
-        user = User.objects.get(id=_user)
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
         try:
             story = Story.objects.get(code=code)
         except Story.DoesNotExist:
