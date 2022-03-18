@@ -339,7 +339,7 @@ class APIDeleteReply(DestroyAPIView):
             })
 
         try:
-            reply = ReplyComment.objects.get(id=reply_id, user=user)
+            reply = Reply.objects.get(id=reply_id, user=user)
         except Reply.DoesNotExist:
             return Response({
                 'ok': False
@@ -403,3 +403,31 @@ class APIUpdateReplyComment(UpdateAPIView):
             return Response({
                 'ok': True
             })
+
+
+class APIDeleteReplyComment(DestroyAPIView):
+    serializer_class = ReplyCommentSerializer
+    permission_classes = [AllowAny]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        data = self.request.data
+        reply_id = data.get('id', '')
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+
+        try:
+            reply_comment = ReplyComment.objects.get(id=reply_id, user=user)
+        except ReplyComment.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+
+        reply_comment.delete()
+
+        return Response({
+            'ok': True
+        })
