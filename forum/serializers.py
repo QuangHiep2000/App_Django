@@ -93,7 +93,6 @@ class ReplySerializer(serializers.ModelSerializer):
     def get_sub_comments(self, obj):
         list = []
         for x in obj['sub_comments']:
-            print(x)
             list.append({
                 'Content': x.content,
                 'user': UserSerializer(x.user).data,

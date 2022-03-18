@@ -319,9 +319,9 @@ class APIReplyComment(ListAPIView):
         reply = Reply.objects.filter(id=7).first()
         if not reply:
             return []
-        print(reply)
         replies_comments = ReplyComment.objects.filter(reply=reply.id)
-
+        if not replies_comments:
+            return []
         return replies_comments
 
 
