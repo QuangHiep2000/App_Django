@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView, ListCreateAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -376,3 +376,30 @@ class APIAddReplyComment(ListCreateAPIView):
         return Response({
             'ok': True
         })
+
+class APIUpdateReplyComment(UpdateAPIView):
+    serializer_class = ReplyCommentSerializer
+    permission_classes = [AllowAny]
+
+    def update(self, request, *args, **kwargs):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        data = self.request.data
+        reply_comment_id = data.get('id', '')
+        content = data.get('content', '')
+        try:
+            reply_comment = ReplyComment.objects.get(id=reply_comment_id)
+        except ReplyComment.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        if reply_comment.user == user:
+            reply_comment.content = content
+            reply_comment.save()
+            return Response({
+                'ok': True
+            })
