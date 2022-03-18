@@ -1,14 +1,24 @@
+from django.db.migrations import serializer
+from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.authtoken.admin import User
 
 from .models import Category, Story, Reply, ReplyComment, StoryLike
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField()
+
     class Meta:
         model = User
         fields = ['username', 'id']
 
+
+# class SubCommentSerializer(serializers.Serializer):
+#     sub_comments = serializers.SerializerMethodField()
+#     class Meta:
+#         fields = ['sub_comments']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,11 +69,12 @@ class StorySerializer(serializers.ModelSerializer):
 
 class ReplySerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    sub_comments = serializers.SerializerMethodField()
+    num_reply_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Reply
         fields = [
-            'story',
             'user',
             'reply_order',
             'content',
@@ -71,11 +82,28 @@ class ReplySerializer(serializers.ModelSerializer):
             'removed',
             'created_at',
             'updated_at',
-            'ip_address',
+            # 'ip_address',
             'user_agent',
-            'edited_at',
-            'edited_by',
+            # 'edited_at',
+            # 'edited_by',
+            'sub_comments',
+            'num_reply_comments',
         ]
+
+    def get_sub_comments(self, obj):
+        list = []
+        for x in obj['sub_comments']:
+            list.append({
+                'Content': x.content,
+                'user': UserSerializer(x.user).data,
+            })
+            # print(list)
+        return {
+            'data': list
+        }
+
+    def get_num_reply_comments(self, obj):
+        return obj['num_reply_comments']
 
 
 class ReplyCommentSerializer(serializers.ModelSerializer):

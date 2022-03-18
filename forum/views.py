@@ -222,37 +222,49 @@ class APIDeleteStory(DestroyAPIView):
         })
 
 
-# class APIListComment(ListAPIView):
-#     serializer_class = StorySerializer
-#     permission_classes = [AllowAny]
-#
-#     def get_queryset(self):
-#         code = self.request.GET.get('code', '')
-#         if not code:
-#             return []
-#         story = Story.objects.filter(code=code).first()
-#         if not story:
-#             return []
-#         reply = Reply.objects.filter(story=story)
-#         replies_id = [x.id for x in reply]
-#         data = []
-#         reply_comment = ReplyComment.objects.filter(reply_id__in=replies_id).order_by('-reply_id')
-#         # user_ids = [x.user_id for x in reply]
-#         # users = User.objects.filter(pk__in=user_ids)
-#         # print(reply_comment)
-#         for x in reply:
-#             # print(x.id)
-#             _reply_comment = next((rc for rc in reply_comment if rc.reply_id == x.id), None)
-#             # _user = next((u for u in users if u.id == x.user_id), None)
-#             data.append({
-#                 'list_replies': reply
-#             })
-#             # print(_reply_comment)
-#         return data
+class APIListComment(ListAPIView):
+    serializer_class = ReplySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        code = self.request.GET.get('code', '')
+        if not code:
+            return []
+        story = Story.objects.filter(code=code).first()
+        if not story:
+            return []
+        reply = Reply.objects.select_related('user').filter(story=story)
+        replies_id = [x.id for x in reply]
+        data = []
+        reply_comment = ReplyComment.objects.filter(reply_id__in=replies_id).order_by('-id')
+        # print(reply_comment)
+        for x in reply:
+            _reply_comment = [rc for rc in reply_comment if rc.reply_id == x.id]
+            data.append({
+                'user': x.user,
+                'removed': x.removed,
+                'content_safe': x.content_safe,
+                'created_at': x.created_at,
+                'sub_comments': _reply_comment[:3], # chỗ này lấy 3 bình luận con mới nhất, list of objects
+                'num_reply_comments': len(_reply_comment),
+            })
+        # user_ids = [x.user_id for x in reply]
+        # users = User.objects.filter(pk__in=user_ids)
+        # print(reply_comment)
+        # for x in reply:
+        #     # print(x.id)
+        #     _reply_comment = next((rc for rc in reply_comment if rc.reply_id == x.id), None)
+        #     # _user = next((u for u in users if u.id == x.user_id), None)
+        #     data.append({
+        #         'list_replies': reply
+        #     })
+        #     # print(_reply_comment)
+        return data
 
 
 class APIAddReply(ListCreateAPIView):
     serializer_class = ReplySerializer
+    # serializer_class = StorySerializer
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
@@ -318,4 +330,4 @@ class APIEditReply(ListCreateAPIView):
 #         reply = Reply.objects.filter(removed=False)
 #         return reply
 #
-#
+
