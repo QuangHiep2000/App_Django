@@ -16,4 +16,5 @@ urlpatterns = [
     path('api/list-comment/', views.APIListComment.as_view(), name='list_comment'),
     path('api/add-reply/', views.APIAddReply.as_view(), name='api_add_reply'),
     path('api/edit-reply/', views.APIEditReply.as_view(), name='api_edit_reply'),
+    path('api/reply-comment/', views.APIReplyComment.as_view(), name='api_reply_comment'),
 ]

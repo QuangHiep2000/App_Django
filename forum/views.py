@@ -237,7 +237,6 @@ class APIListComment(ListAPIView):
         replies_id = [x.id for x in reply]
         data = []
         reply_comment = ReplyComment.objects.filter(reply_id__in=replies_id).order_by('-id')
-        # print(reply_comment)
         for x in reply:
             _reply_comment = [rc for rc in reply_comment if rc.reply_id == x.id]
             data.append({
@@ -248,17 +247,6 @@ class APIListComment(ListAPIView):
                 'sub_comments': _reply_comment[:3], # chỗ này lấy 3 bình luận con mới nhất, list of objects
                 'num_reply_comments': len(_reply_comment),
             })
-        # user_ids = [x.user_id for x in reply]
-        # users = User.objects.filter(pk__in=user_ids)
-        # print(reply_comment)
-        # for x in reply:
-        #     # print(x.id)
-        #     _reply_comment = next((rc for rc in reply_comment if rc.reply_id == x.id), None)
-        #     # _user = next((u for u in users if u.id == x.user_id), None)
-        #     data.append({
-        #         'list_replies': reply
-        #     })
-        #     # print(_reply_comment)
         return data
 
 
@@ -322,12 +310,18 @@ class APIEditReply(ListCreateAPIView):
             'ok': True
         })
 
-# class APIEditReply(ListAPIView):
-#     serializer_class = ReplySerializer
-#     permission_classes = [AllowAny]
-#
-#     def get_queryset(self):
-#         reply = Reply.objects.filter(removed=False)
-#         return reply
-#
+class APIReplyComment(ListAPIView):
+    serializer_class = ReplyCommentSerializer
+    permission_classes = [AllowAny]
+    pagination_class = ListPagination
+
+    def get_queryset(self):
+        reply = Reply.objects.filter(id=7).first()
+        if not reply:
+            return []
+        print(reply)
+        replies_comments = ReplyComment.objects.filter(reply=reply.id)
+
+        return replies_comments
+
 
