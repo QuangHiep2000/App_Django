@@ -252,7 +252,6 @@ class APIListComment(ListAPIView):
 
 class APIAddReply(ListCreateAPIView):
     serializer_class = ReplySerializer
-    # serializer_class = StorySerializer
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
@@ -348,6 +347,32 @@ class APIDeleteReply(DestroyAPIView):
 
         reply.delete()
 
+        return Response({
+            'ok': True
+        })
+
+
+class APIAddReplyComment(ListCreateAPIView):
+    serializer_class = ReplyCommentSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        data = self.request.data
+        reply_id = data.get('id', '')
+        content = data.get('content', '')
+        try:
+            reply = Reply.objects.get(id=reply_id)
+        except Reply.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        ReplyComment.objects.create(reply=reply, content=content, user=user)
         return Response({
             'ok': True
         })

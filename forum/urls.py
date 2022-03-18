@@ -18,4 +18,5 @@ urlpatterns = [
     path('api/edit-reply/', views.APIEditReply.as_view(), name='api_edit_reply'),
     path('api/reply-comment/', views.APIReplyComment.as_view(), name='api_reply_comment'),
     path('api/delete-reply/', views.APIDeleteReply.as_view(), name='api_delete_reply'),
+    path('api/add-reply-comment/', views.APIAddReplyComment.as_view(), name='add_reply_comment'),
 ]
