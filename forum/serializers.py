@@ -1,5 +1,13 @@
 from rest_framework import serializers
+from rest_framework.authtoken.admin import User
+
 from .models import Category, Story, Reply, ReplyComment, StoryLike
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'id']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -15,6 +23,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class StorySerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Story
         fields = [
@@ -48,11 +58,13 @@ class StorySerializer(serializers.ModelSerializer):
 
 
 class ReplySerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Reply
         fields = [
-            'user',
             'story',
+            'user',
             'reply_order',
             'content',
             'content_safe',
@@ -67,6 +79,8 @@ class ReplySerializer(serializers.ModelSerializer):
 
 
 class ReplyCommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = ReplyComment
         fields = [
@@ -88,3 +102,7 @@ class StoryLikeSerializer(serializers.ModelSerializer):
             'story',
             'created_at',
         ]
+
+
+
+

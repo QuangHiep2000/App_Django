@@ -7,7 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .serializers import CategorySerializer, StorySerializer, ReplySerializer, ReplyCommentSerializer, StoryLikeSerializer
+from .serializers import CategorySerializer, StorySerializer, ReplySerializer, ReplyCommentSerializer, \
+    StoryLikeSerializer, UserSerializer
 from .models import Story, Category, Reply, ReplyComment, StoryLike
 
 
@@ -222,7 +223,7 @@ class APIDeleteStory(DestroyAPIView):
 
 
 # class APIListComment(ListAPIView):
-#     serializer_class = ReplySerializer
+#     serializer_class = StorySerializer
 #     permission_classes = [AllowAny]
 #
 #     def get_queryset(self):
@@ -233,15 +234,20 @@ class APIDeleteStory(DestroyAPIView):
 #         if not story:
 #             return []
 #         reply = Reply.objects.filter(story=story)
+#         replies_id = [x.id for x in reply]
 #         data = []
-#         for i in reply:
-#             print(i.id)
-#             _reply = Reply.objects.get(id=i.id)
-#             reply_comment = ReplyComment.objects.filter(reply=_reply)[:3]
+#         reply_comment = ReplyComment.objects.filter(reply_id__in=replies_id).order_by('-reply_id')
+#         # user_ids = [x.user_id for x in reply]
+#         # users = User.objects.filter(pk__in=user_ids)
+#         # print(reply_comment)
+#         for x in reply:
+#             # print(x.id)
+#             _reply_comment = next((rc for rc in reply_comment if rc.reply_id == x.id), None)
+#             # _user = next((u for u in users if u.id == x.user_id), None)
 #             data.append({
-#                 'list_story': reply,
-#                 'reply_comment': reply_comment,
+#                 'list_replies': reply
 #             })
+#             # print(_reply_comment)
 #         return data
 
 
@@ -259,9 +265,6 @@ class APIAddReply(ListCreateAPIView):
         data = self.request.data
         code = data.get('code', '')
         content = data.get('content', '')
-        # _user = User.objects.get(id=user)
-        # print(_user)
-        # print(data)
         try:
             story = Story.objects.get(code=code)
         except Story.DoesNotExist:
@@ -272,3 +275,47 @@ class APIAddReply(ListCreateAPIView):
         return Response({
             'ok': True
         })
+
+
+class APIEditReply(ListCreateAPIView):
+    serializer_class = ReplySerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Response({
+                'ok': False,
+                'msg': 'ban chua dan nhap'
+            })
+        data = self.request.data
+        code = data.get('code', '')
+        content = data.get('content', '')
+        created_at = data.get('created_at', '')
+        try:
+            story = Story.objects.get(code=code)
+        except Story.DoesNotExist:
+            return Response({
+                'ok': False
+            })
+        try:
+            reply = Reply.objects.get(user=user, story=story, created_at=created_at)
+        except Reply.DoesNotExist:
+            return Response({
+                'ok': False,
+            })
+        Reply.objects.filter(id=reply.id).update(content=content)
+        print(reply)
+        return Response({
+            'ok': True
+        })
+
+# class APIEditReply(ListAPIView):
+#     serializer_class = ReplySerializer
+#     permission_classes = [AllowAny]
+#
+#     def get_queryset(self):
+#         reply = Reply.objects.filter(removed=False)
+#         return reply
+#
+#
