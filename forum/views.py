@@ -29,7 +29,7 @@ class CreatePOST(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        if not user.is_authenticated:
+        if not user.is_authenticated or user == 'AnonymousUser':
             return Response({
                 'ok': False,
                 'msg': 'ban chua dan nhap'
@@ -38,29 +38,20 @@ class CreatePOST(ListCreateAPIView):
         content = data.get('content', '')
         title = data.get('title', '')
         category = data.get('category', '')
-        last_activity_by = data.get('last_activity_by', '')
-        status = data.get('status', '')
-        num_participants = data.get('num_participants', '')
-        ip_address = data.get('ip_address', '')
-        user_agent = data.get('user_agent', '')
         # user = data.get('user', '')
-        # _user = User.objects.get(id=user)
+        print(user)
+        _user = User.objects.get(username=user)
         try:
-            _category = Category.objects.get(name=category)
-            _last_activity_by = User.objects.get(id=last_activity_by)
+            _category = Category.objects.filter(name__in=category)
         except Category.DoesNotExist:
             return []
         story = Story.objects.create(
-            # user=_user,
+            user=_user,
             content=content,
             title=title,
-            last_activity_by=_last_activity_by,
-            status=status,
-            num_participants=num_participants,
-            ip_address=ip_address,
-            user_agent=user_agent,
         )
-        story.category.add(_category)
+        for x in _category:
+            story.category.add(x)
         return Response({
             'ok': True
         })
@@ -429,3 +420,14 @@ class APIDeleteReplyComment(DestroyAPIView):
         return Response({
             'ok': True
         })
+
+
+class APICategory(ListAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        category = Category.objects.all().values('name')
+        if not category:
+            return []
+        return category

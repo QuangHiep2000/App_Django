@@ -4,7 +4,7 @@ from forum import views
 app_name = "forum"
 
 urlpatterns = [
-    path('create-post/', views.CreatePOST.as_view(), name='create_post'),
+    path('api/create-post/', views.CreatePOST.as_view(), name='create_post'),
     path('update-post/', views.UpdatePOST.as_view(), name='update_post'),
     path('api/list-story/', views.StoryListAPIView.as_view(), name='api_list_story'),
     path('api/add-story-like/', views.AddLikeAPI.as_view(), name='api_add_story_like'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('api/add-reply-comment/', views.APIAddReplyComment.as_view(), name='add_reply_comment'),
     path('api/update-reply-comment/', views.APIUpdateReplyComment.as_view(), name='update_reply_comment'),
     path('api/delete-reply-comment/', views.APIDeleteReplyComment.as_view(), name='delete_reply_comment'),
+    path('api/catefory/', views.APICategory.as_view(), name='api_catefory'),
 ]

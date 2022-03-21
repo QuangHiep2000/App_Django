@@ -43,7 +43,7 @@ class Story(models.Model):
     num_likes = models.PositiveIntegerField(default=0)
     num_replies = models.PositiveIntegerField(default=0)
     num_comments = models.PositiveIntegerField(default=0)
-    num_participants = models.PositiveIntegerField(default=-1)
+    num_participants = models.PositiveIntegerField(default=0)
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     user_agent = models.TextField(blank=True)
 

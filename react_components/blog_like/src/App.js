@@ -19,7 +19,7 @@ function App() {
 
     const StyledButton = styled.div(({checkLike}) =>[
         checkLike ? (tw`text-white bg-gradient-to-br from-green-400 to-blue-600 font-medium rounded-lg text-sm px-4 py-3 text-center flex justify-center items-center cursor-pointer opacity-50`)
-            : tw`text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-3 text-center flex justify-center items-center cursor-pointer`,
+             : tw`text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-3 text-center flex justify-center items-center cursor-pointer`,
     ]);
 
     // const notify = () => ;toast('Here is your toast.')
