@@ -34,6 +34,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Story
@@ -48,23 +49,28 @@ class StorySerializer(serializers.ModelSerializer):
             'last_activity_at',
             'created_at',
             'updated_at',
-            'scheduled_at',
+            # 'scheduled_at',
             'published_at',
             'STORY_STATUS_CHOICES',
             'status',
             'closed',
-            'featured_until',
+            # 'featured_until',
             'featured',
-            'edited_at',
-            'edited_by',
+            # 'edited_at',
+            # 'edited_by',
             'num_views',
             'num_likes',
             'num_replies',
             'num_comments',
             'num_participants',
-            'ip_address',
+            # 'ip_address',
             'user_agent',
         ]
+    def get_category(self, obj):
+        categories = []
+        for x in obj['category']:
+            categories.append(CategorySerializer(x).data)
+        return categories
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -92,6 +98,7 @@ class ReplySerializer(serializers.ModelSerializer):
 
     def get_sub_comments(self, obj):
         list = []
+        print('nam')
         for x in obj['sub_comments']:
             list.append({
                 'Content': x.content,

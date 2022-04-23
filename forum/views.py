@@ -29,7 +29,7 @@ class CreatePOST(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        if not user.is_authenticated or user == 'AnonymousUser':
+        if not user.is_authenticated:
             return Response({
                 'ok': False,
                 'msg': 'ban chua dan nhap'
@@ -37,16 +37,39 @@ class CreatePOST(ListCreateAPIView):
         data = self.request.data
         content = data.get('content', '')
         title = data.get('title', '')
-        category = data.get('category', '')
+        category_slug = data.get('category_slug', [])  # "['slug-1','slug-2']"
+
+        if len(title) < 20:
+            return Response({
+                'ok': False,
+                'msg': 'Tiêu đề không được nhỏ hơn 20 ký tự'
+            })
+        if len(title) > 5000:
+            return Response({
+                'ok': False,
+                'msg': 'Tiêu đề không được lớn hơn 5000 ký tự'
+            })
+        if len(content) < 20:
+            return Response({
+                'ok': False,
+                'msg':'Nội dung không được nhỏ hơn 20 ký tự'
+            })
+        if len(content) < 20:
+            return Response({
+                'ok': False,
+                'msg': 'Nội dung không được nhỏ hơn 20 ký tự'
+            })
         # user = data.get('user', '')
         print(user)
-        _user = User.objects.get(username=user)
-        try:
-            _category = Category.objects.filter(name__in=category)
-        except Category.DoesNotExist:
-            return []
+        # _user = User.objects.get(username=user)
+        _category = Category.objects.filter(slug__in=category_slug)
+        if len(_category) == 0:
+            return Response({
+                'ok': False,
+                'msg': 'Không tìm thấy category'
+            })
         story = Story.objects.create(
-            user=_user,
+            user=user,
             content=content,
             title=title,
         )
@@ -116,7 +139,7 @@ class UpdatePOST(UpdateAPIView):
 class ListPagination(PageNumberPagination):
     # serializer_class = StorySerializer
     # permission_classes = [AllowAny]
-    page_size = 20
+    page_size = 1
     page_size_query_param = 'page_size'
     max_page_size = 20
 
@@ -136,7 +159,17 @@ class StoryListAPIView(ListAPIView):
 
     def get_queryset(self):
         list_story = Story.objects.filter(status='P').order_by('-updated_at')
-        return list_story
+        data = []
+        for x in list_story:
+            category_ids = [ca for ca in x.category.all()]
+            data.append({
+                'user': x.user,
+                'title': x.title,
+                'created_at': x.created_at,
+                'updated_at': x.updated_at,
+                'category': category_ids,
+            })
+        return data
 
 
 class AddLikeAPI(ListCreateAPIView):
@@ -216,15 +249,19 @@ class APIListComment(ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
+        print(1)
         code = self.request.GET.get('code', '')
+        print(code)
         if not code:
             return []
         story = Story.objects.filter(code=code).first()
+        print(story)
         if not story:
             return []
         reply = Reply.objects.select_related('user').filter(story=story)
         replies_id = [x.id for x in reply]
         data = []
+        print(reply)
         reply_comment = ReplyComment.objects.filter(reply_id__in=replies_id).order_by('-id')
         for x in reply:
             _reply_comment = [rc for rc in reply_comment if rc.reply_id == x.id]
@@ -427,7 +464,7 @@ class APICategory(ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        category = Category.objects.all().values('name')
+        category = Category.objects.all().values('name', 'slug')
         if not category:
             return []
         return category
