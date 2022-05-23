@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
 
     'forum.apps.ForumConfig',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
